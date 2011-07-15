@@ -1,0 +1,49 @@
+package autokorrelation;
+
+import org.eclipse.swt.graphics.ImageData;
+
+public class Autokorrelate {
+
+	private static final int THRESHOLD = 100;
+
+	
+	static int korrArrays(int[] v1,int[] v2){
+		if (v1.length!=v2.length) throw new IllegalArgumentException("Arrays must be the same length");
+		int sum = 0;
+		for (int i=0;i<v1.length;i++){
+			sum+=v1[i]*v2[i];
+		}
+		return sum;
+	}
+	
+	static int calcAutokorrDiff(int d, ImageData i1, ImageData i2){
+		d = Math.max(1, d);
+		int[] i1Amplitudes = Autokorrelate.getAmplitudes(i1,i1.height-d,d);
+		int[] i2Amplitudes = Autokorrelate.getAmplitudes(i2,0,d);
+		
+		return Autokorrelate.korrArrays(i1Amplitudes, i2Amplitudes)/d;
+	}
+	
+
+	static int[] getAmplitudes(ImageData imageData, int startY, int height){
+		if (startY+height > imageData.height) throw new IllegalArgumentException("startY + height must not exceed imaegheight");
+		int[] tmp = new int[height];
+		int[] pixels = new int[imageData.width];
+		
+		for (int y = 0;y < height; y++){
+			imageData.getPixels(0, startY+y, pixels.length, pixels, 0);
+			tmp[y] = getAmplitude(pixels);
+		}
+		
+		return tmp;
+	}
+	
+	static int getAmplitude(int[] pixels) {
+		int a = 0;
+		for (int i:pixels) {
+			int c = i >> 16;
+			a+= c > THRESHOLD ? 1 : 0;
+		}
+		return a;
+	}
+}
