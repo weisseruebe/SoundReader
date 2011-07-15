@@ -54,8 +54,6 @@ public class ImageReader extends AudioInputStream{
 		return 0;//1000*1080-pos;
 	}
 	
-	
-	
 	public int read(byte[] abData, int nOffset, int nLength)
 	throws IOException
 	{
@@ -104,8 +102,6 @@ public class ImageReader extends AudioInputStream{
 			}
 			System.out.println("SHIFT "+shift+" DIFF "+diff);
 		}
-		
-		
 	}
 
 	private String createFileName(int n) {
