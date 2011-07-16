@@ -6,6 +6,20 @@ public class Autokorrelate {
 
 	private static final int THRESHOLD = 100;
 
+	static int findMaxKorrelation(int start, int end, ImageData i1Data, ImageData i2Data, int[] results){
+		int maxD = 1;
+		int maxV = 0;
+		for (int d=start;d<end;d++){
+			int aK = Autokorrelate.calcAutokorrDiff(d, i1Data, i2Data);
+			if (results!=null)results[d] = aK;
+			if (aK > maxV){
+				maxV = aK;
+				maxD = d;
+			} 
+		}
+		return  maxD;
+	}
+	
 	
 	static int korrArrays(int[] v1,int[] v2){
 		if (v1.length!=v2.length) throw new IllegalArgumentException("Arrays must be the same length");

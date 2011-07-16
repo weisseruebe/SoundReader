@@ -16,8 +16,6 @@ public class ImageReader extends AudioInputStream{
 	int yUpper = 0;
 	int yLower = 1080;
 	
-	int dark = -10000;
-	int bright = 0;
 	private String image;
 	private int pos = 0;
 	
@@ -43,9 +41,7 @@ public class ImageReader extends AudioInputStream{
 				int rgb = image2.getRGB(x, y);
 				Color c = new Color(rgb);
 				if (c.getRed()>80) values[y-yUpper]++;
-				
 			}	
-	//		System.out.println(values[y-yUpper]);
 		}
 		return values;
 	}
