@@ -4,7 +4,7 @@ import org.eclipse.swt.graphics.ImageData;
 
 public class Autokorrelate {
 
-	private static final int THRESHOLD = 100;
+	private static final int THRESHOLD = 200;
 
 	static int findMaxKorrelation(int start, int end, ImageData i1Data, ImageData i2Data, int[] results){
 		int maxD = 1;
@@ -39,7 +39,7 @@ public class Autokorrelate {
 	}
 	
 
-	static int[] getAmplitudes(ImageData imageData, int startY, int height){
+	public static int[] getAmplitudes(ImageData imageData, int startY, int height){
 		if (startY+height > imageData.height) throw new IllegalArgumentException("startY + height must not exceed imaegheight");
 		int[] tmp = new int[height];
 		int[] pixels = new int[imageData.width];
@@ -52,11 +52,27 @@ public class Autokorrelate {
 		return tmp;
 	}
 	
-	static int getAmplitude(int[] pixels) {
+	public static byte[] getByteAmplitudes(ImageData imageData, int startY, int height){
+		if (startY+height > imageData.height) throw new IllegalArgumentException("startY + height must not exceed imaegheight");
+		byte[] tmp = new byte[height];
+		int[] pixels = new int[imageData.width];
+		
+		for (int y = 0;y < height; y++){
+			imageData.getPixels(0, startY+y, pixels.length, pixels, 0);
+			tmp[y] = (byte) getAmplitude(pixels);
+		}
+		
+		return tmp;
+	}
+	
+	
+	public static int getAmplitude(int[] pixels) {
 		int a = 0;
 		for (int i:pixels) {
-			int c = i >> 16;
-			a+= c > THRESHOLD ? 1 : 0;
+			int r = (i >> 16) & 0xff;
+			int g = (i >> 8)  & 0xff;
+			int b = i & 0xff;
+			a+= (r+b+g)/3 > THRESHOLD ? 1 : 0;
 		}
 		return a;
 	}

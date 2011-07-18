@@ -1,5 +1,9 @@
 package autokorrelation;
 
+import java.awt.MouseInfo;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyAdapter;
@@ -20,9 +24,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import com.cloudgarden.resource.SWTResourceManager;
+import com.sun.xml.internal.bind.v2.schemagen.episode.Klass;
 
 
 /**
@@ -62,12 +65,11 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 	private MenuItem fileMenuItem;
 	protected int mouseStartY = -1;
 	private int region  = 100;
+	MouseBehaviour mouseBehaviour;
 	
-//	private String f1 = "./testpics/1.png";
-//	private String f2 = "./testpics/2.png";
-
 	private String f1 = "./testpics/g2.bmp";
 	private String f2 = "./testpics/g1.bmp";
+	int index = 5;
 
 	private int diff = 1;
 	private Image i1;
@@ -75,6 +77,65 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 	int[] results = new int[MAXDIFF];
 	ImageData i1Data;// = new ImageData(f1);
 	ImageData i2Data;// = new ImageData(f2);
+	protected boolean mouseDown;
+	List<Integer> klickedYs = new ArrayList<Integer>();
+	protected int mouseY;
+
+	
+	MouseBehaviour korrBehaviour = new  MouseBehaviour(){
+
+		public void mouseDoubleClick(MouseEvent arg0) {
+		}
+
+		public void mouseDown(MouseEvent arg0) {
+			mouseStartY = diff+arg0.y;
+		}
+
+		public void mouseUp(MouseEvent arg0) {
+			mouseStartY = -1;			
+		}
+
+		public void mouseMove(MouseEvent arg0) {
+			if (mouseStartY>=0){
+				diff = mouseStartY-arg0.y;
+				diff = Math.max(0, diff);
+				Autokorrelate.calcAutokorrDiff(diff, i1Data, i2Data);
+				redraw();
+			}
+		}
+		
+	};
+
+	
+	MouseBehaviour measureBehaviour = new  MouseBehaviour(){
+		
+		public void mouseDoubleClick(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void mouseDown(MouseEvent arg0) {
+			klickedYs.add(arg0.y);
+			if (klickedYs.size()>=3){
+				mouseBehaviour = korrBehaviour;
+			}
+			mouseDown = true;
+			redraw();
+		}
+
+		public void mouseUp(MouseEvent arg0) {
+			mouseDown = false;
+			
+		}
+
+		public void mouseMove(MouseEvent arg0) {
+			mouseY = arg0.y;
+			redraw();
+			
+		}
+		
+	};
+	
 	
 	PaintListener paintPics = new PaintListener(){
 
@@ -101,7 +162,7 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 			
 			drawAmplitudes(gc);
 			drawDiff(gc);
-		
+			drawMeas(gc);
 			gc.dispose();
 			
 		}
@@ -135,6 +196,32 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 		gc.drawLine(0, i1Data.height-diff-region, 1280, i1Data.height-diff-region);
 		gc.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		gc.drawText(String.valueOf(diff), 100, i1Data.height-diff);
+	}
+	
+
+	protected void drawMeas(GC gc) {
+		gc.setForeground(SWTResourceManager.getColor(0, 100, 100));
+		switch (klickedYs.size()) {
+		case 3:
+		case 2:	
+			gc.setForeground(SWTResourceManager.getColor(90, 100, 100));
+			gc.drawLine(0, klickedYs.get(1), 300, klickedYs.get(1));
+			gc.drawLine(0, klickedYs.get(0), 300, klickedYs.get(0));
+			gc.drawLine(0, klickedYs.get(0)+(klickedYs.get(0)-klickedYs.get(1)), 100, klickedYs.get(0)+(klickedYs.get(0)-klickedYs.get(1)));
+			break;
+		case 1:
+			gc.setForeground(SWTResourceManager.getColor(90, 100, 100));
+			gc.drawLine(0, klickedYs.get(0), 300, klickedYs.get(0));
+			gc.drawLine(0, mouseY, 300, mouseY);
+			gc.drawLine(0, klickedYs.get(0)+(klickedYs.get(0)-mouseY), 300, klickedYs.get(0)+(klickedYs.get(0)-mouseY));
+			
+		case 0:
+			gc.drawLine(0, mouseY, 100, mouseY);
+			
+		default:
+			break;
+		}
+		gc.setForeground(SWTResourceManager.getColor(0, 0, 0));
 			
 	}
 
@@ -146,12 +233,15 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 		}
 		gc.setAlpha(255);
 	}
-
+	
 	
 	/**
 	* Initializes the GUI.
 	*/
 	private void initGUI() {
+		
+		mouseBehaviour = korrBehaviour;
+		
 		try {
 			this.setSize(715, 411);
 			this.setBackground(SWTResourceManager.getColor(192, 192, 192));
@@ -210,28 +300,23 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 						}
 
 						public void mouseDown(MouseEvent arg0) {
-							mouseStartY = arg0.y;
-							
+							mouseBehaviour.mouseDown(arg0);
 						}
 
 						public void mouseUp(MouseEvent arg0) {
-							mouseStartY = -1;							
+							mouseBehaviour.mouseUp(arg0);				
 						}
 						
 					});
 					cmpPics.addMouseMoveListener(new MouseMoveListener(){
 
 						public void mouseMove(MouseEvent arg0) {
-							if (mouseStartY>=0){
-								diff = mouseStartY-arg0.y;
-								diff = Math.max(0, diff);
-								Autokorrelate.calcAutokorrDiff(diff, i1Data, i2Data);
-								redraw();
-							}
 							
+							mouseBehaviour.mouseMove(arg0);
 						}
 						
 					});
+					
 					cmpPics.addKeyListener(new KeyAdapter(){
 						
 						public void keyReleased(KeyEvent arg0) {
@@ -245,11 +330,19 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 							case 'a':
 								diff = Autokorrelate.findMaxKorrelation(diff, diff+region, i1Data, i2Data,results);
 								redraw();	
+								break;
+							case 'p':
+								mouseBehaviour = measureBehaviour;
+								klickedYs.clear();
+								break;
+							case 'o':
+								mouseBehaviour = korrBehaviour;
+								break;
+								
 							default:
 								break;
 							}
 							redraw();
-							System.out.println("MAN "+diff+" "+results[diff]);
 							
 						}
 						
@@ -279,13 +372,18 @@ public class AutokorrTest extends org.eclipse.swt.widgets.Composite {
 		}
 	}
 	
+	
 	protected void loadNextPics() {
-		 f1 = "./testpics/r248.bmp";
-		 f2 = "./testpics/r249.bmp";
+		 f1 = "/Users/andreasrettig/Desktop/tarot/"+String.format("TarotMechanic%05d.bmp", index);
+		 index++;
+		 f2 = "/Users/andreasrettig/Desktop/tarot/"+String.format("TarotMechanic%05d.bmp", index);
 		 loadPics();
-		
+		 redraw();
+		 diff = Autokorrelate.findMaxKorrelation(0, 100, i1Data, i2Data, results);
 	}
 
+
+	
 	/**
 	* Auto-generated main method to display this 
 	* org.eclipse.swt.widgets.Composite inside a new Shell.
