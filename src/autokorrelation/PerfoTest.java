@@ -106,6 +106,8 @@ public class PerfoTest extends org.eclipse.swt.widgets.Composite {
 		
 	};
 
+	private Autokorrelator autokorrelator = new Autokorrelator();
+
 	{
 		//Register as a resource user - SWTResourceManager will
 		//handle the obtaining and disposing of resources
@@ -138,7 +140,7 @@ public class PerfoTest extends org.eclipse.swt.widgets.Composite {
 
 	protected void drawAmplitudes(GC gc) {
 		gc.setAlpha(100);
-		int[] i1Amplitudes = Autokorrelate.getAmplitudes(i1Data,0,i1Data.height);
+		int[] i1Amplitudes = autokorrelator .getAmplitudes(i1Data,0,i1Data.height);
 		for (int y=0;y<i1Amplitudes.length;y++){
 			gc.drawLine(i1Data.width, y, i1Data.width+i1Amplitudes[y], y);
 		}
@@ -223,7 +225,7 @@ public class PerfoTest extends org.eclipse.swt.widgets.Composite {
 							if (mouseStartY>=0){
 								diff = mouseStartY-arg0.y;
 								diff = Math.max(0, diff);
-								results[diff] = Autokorrelate.calcAutokorrDiff(diff, i1Data, i2Data);
+								results[diff] = autokorrelator.calcAutokorrDiff(diff, i1Data, i2Data);
 								redraw();
 							}
 							
@@ -235,13 +237,13 @@ public class PerfoTest extends org.eclipse.swt.widgets.Composite {
 						public void keyReleased(KeyEvent arg0) {
 							switch (arg0.character) {
 							case 'n':
-								Autokorrelate.calcAutokorrDiff(diff++, i1Data, i2Data);
+								autokorrelator.calcAutokorrDiff(diff++, i1Data, i2Data);
 								break;
 							case 'm':
-								Autokorrelate.calcAutokorrDiff(diff--, i1Data, i2Data);
+								autokorrelator.calcAutokorrDiff(diff--, i1Data, i2Data);
 								break;
 							case 'a':
-								diff = Autokorrelate.findMaxKorrelation(diff, diff+region, i1Data, i2Data,results);
+								diff = autokorrelator.findMaxKorrelation(diff, diff+region, i1Data, i2Data,results);
 								redraw();	
 							default:
 								break;
@@ -285,7 +287,7 @@ public class PerfoTest extends org.eclipse.swt.widgets.Composite {
 		 f2 = "/Users/andreasrettig/Desktop/tarot/"+String.format("perf%05d.bmp", index);
 		 loadPics();
 		 redraw();
-		 diff = Autokorrelate.findMaxKorrelation(0, 100, i1Data, i2Data, results);
+		 diff = autokorrelator.findMaxKorrelation(0, 100, i1Data, i2Data, results);
 	}
 
 	/**

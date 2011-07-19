@@ -2,14 +2,20 @@ package playground;
 
 // Example 17-4. PlaySoundStream.java
 
-import java.io.*;
-import java.net.*;
-import javax.sound.sampled.*;
-import javax.sound.midi.*;
+import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.eclipse.swt.graphics.ImageData;
 
-import autokorrelation.Autokorrelate;
+import autokorrelation.Autokorrelator;
 
 /**
  * This class plays sounds streaming from a URL: it does not have to preload
@@ -19,7 +25,10 @@ import autokorrelation.Autokorrelate;
  * before MIDI files.
  */
 public class PlaySoundStream {
-    // Create a URL from the command-line argument and pass it to the 
+    private static Autokorrelator autokorrelator = new Autokorrelator();
+
+
+	// Create a URL from the command-line argument and pass it to the 
     // right static method depending on the presence of the -m (MIDI) option.
     public static void main(String[  ] args) throws Exception {
         streamSampledAudio();
@@ -87,7 +96,7 @@ public class PlaySoundStream {
             	String name = createFileName(n++);
             	ImageData imageData = new ImageData(name);
             	//System.out.println(name);
-            	byte[] sampleBuffer = Autokorrelate.getByteAmplitudes(imageData, 0,imageData.height - offset);
+            	byte[] sampleBuffer = autokorrelator .getByteAmplitudes(imageData, 0,imageData.height - offset);
         		
                //int bytesread = buffer.length;
                 // If there were no more bytes to read, we're done.

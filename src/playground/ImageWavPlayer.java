@@ -5,9 +5,11 @@ import java.io.File;
 import org.eclipse.swt.graphics.ImageData;
 
 import wavfile.WavFile;
-import autokorrelation.Autokorrelate;
+import autokorrelation.Autokorrelator;
 
 public class ImageWavPlayer {
+	private static Autokorrelator autokorrelator = new Autokorrelator();
+
 	public static void main(String[] args) {
 		try {
 			int numPics     = 1175;
@@ -31,7 +33,7 @@ public class ImageWavPlayer {
 				// buffer size
 				long remaining = wavFile.getFramesRemaining();
 				// Fill the buffer, one tone per channel
-				int[] sampleBuffer = Autokorrelate.getAmplitudes(imageData, 0,
+				int[] sampleBuffer = autokorrelator .getAmplitudes(imageData, 0,
 						imageData.height - offset);
 				
 				for (int i = 0; i < fadeLength; i++) {
