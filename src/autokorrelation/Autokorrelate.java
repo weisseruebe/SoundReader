@@ -2,9 +2,14 @@ package autokorrelation;
 
 import org.eclipse.swt.graphics.ImageData;
 
+
+//TODO Static raus mit Threshold und Noiselevel
+//TODO Imageprocessing extra
+
 public class Autokorrelate {
 
 	private static final int THRESHOLD = 200;
+	private static final int NOISETHRESHOLD = 25;
 
 	static int findMaxKorrelation(int start, int end, ImageData i1Data, ImageData i2Data, int[] results){
 		int maxD = 1;

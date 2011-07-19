@@ -1,6 +1,5 @@
 package autokorrelation;
 
-import java.awt.MouseInfo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import com.cloudgarden.resource.SWTResourceManager;
-import com.sun.xml.internal.bind.v2.schemagen.episode.Klass;
 
 
 /**
