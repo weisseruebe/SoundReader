@@ -34,7 +34,7 @@ public class WavFile
 	// Wav Header
 	private int numChannels;				// 2 bytes unsigned, 0x0001 (1) to 0xFFFF (65,535)
 	private long sampleRate;				// 4 bytes unsigned, 0x00000001 (1) to 0xFFFFFFFF (4,294,967,295)
-													// Although a java int is 4 bytes, it is signed, so need to use a long
+											// Although a java int is 4 bytes, it is signed, so need to use a long
 	private int blockAlign;					// 2 bytes unsigned, 0x0001 (1) to 0xFFFF (65,535)
 	private int validBits;					// 2 bytes unsigned, 0x0002 (2) to 0xFFFF (65,535)
 
@@ -99,10 +99,10 @@ public class WavFile
 		// Calculate the chunk sizes
 		long dataChunkSize = wavFile.blockAlign * numFrames;
 		long mainChunkSize =	4 +	// Riff Type
-									8 +	// Format ID and size
-									16 +	// Format data
-									8 + 	// Data ID and size
-									dataChunkSize;
+								8 +	// Format ID and size
+								16 +	// Format data
+								8 + 	// Data ID and size
+								dataChunkSize;
 
 		// Chunks must be word aligned, so if odd number of audio data bytes
 		// adjust the main chunk size

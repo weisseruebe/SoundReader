@@ -1,4 +1,4 @@
-package autokorrelation;
+package de.rettig.autokorrelation;
 
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
