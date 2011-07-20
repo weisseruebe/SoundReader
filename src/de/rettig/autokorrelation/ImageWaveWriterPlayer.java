@@ -10,23 +10,25 @@ import javax.sound.sampled.SourceDataLine;
 
 import org.eclipse.swt.graphics.ImageData;
 
+import de.rettig.wavfile.WavFile;
+import de.rettig.wavfile.WavFileException;
 
-import wavfile.WavFile;
-import wavfile.WavFileException;
+
 
 public class ImageWaveWriterPlayer {
 
-	private static final int LISTENERINTERVAL = 2;
-	private  AudioFormat format ;
-	private  DataLine.Info info;
+	private int LISTENERINTERVAL = 2;
+	private AudioFormat format ;
+	private DataLine.Info info;
 	private SourceDataLine line = null;   // And write it here.
-	private static Autokorrelator autokorrelator = new Autokorrelator();
+	private Autokorrelator autokorrelator = new Autokorrelator();
 
 	private ImageDataSource iSource;
 	private int offset      = 47;
 	private ImageListener imageListener;
 	private boolean stop = false;
-
+	private boolean writeFile = false;
+	private WavFile wavFile;
 
 	public ImageWaveWriterPlayer(ImageDataSource iSource){
 		this.iSource = iSource;
@@ -51,21 +53,21 @@ public class ImageWaveWriterPlayer {
 		line = (SourceDataLine) AudioSystem.getLine(info);
 		line.open(format);  
 		
-		// Calculate the number of frames required for specified duration
 		long numFrames = (long) (duration * sampleRate);
 
-		// Create a wav file with the name specified as the first argument
-		WavFile wavFile = WavFile.newWavFile(new File("writerTest.wav"), 1,	numFrames, 8, sampleRate);
+		if (writeFile){
+			wavFile = WavFile.newWavFile(new File("writerTest.wav"), 1,	numFrames, 8, sampleRate);
+		}
 		byte[] fadeBuffer = new byte[fadeLength];
 
-		// Loop until all frames written
 		for (int n = 0; n < numPics; n++) {
 			ImageData imageData = iSource.getImageData(n);
-			if (imageListener!=null & n % LISTENERINTERVAL == 0)imageListener.imageChanged(iSource.getPath(n));
-
-			// Determine how many frames to write, up to a maximum of the
-			// buffer size
-
+			
+			/* Notify listener */
+			if (imageListener!=null & n % LISTENERINTERVAL == 0){
+				imageListener.imageChanged(iSource.getPath(n));
+			}
+		
 			if (!started) {
 				line.start( );
 				started = true;
@@ -74,7 +76,7 @@ public class ImageWaveWriterPlayer {
 //			int[] sampleBuffer   = autokorrelator.getAmplitudes(imageData, 0,imageData.height - offset);
 			byte[] sampleBufferB = autokorrelator.getByteAmplitudes(imageData, 0,imageData.height - offset);
 
-
+			/* Fade with last frame */
 			for (int i = 0; i < fadeLength; i++) {
 				sampleBufferB[i] = 
 					(byte) ((sampleBufferB[i]* i 
@@ -86,16 +88,22 @@ public class ImageWaveWriterPlayer {
 					sampleBufferB.length - fadeLength, fadeBuffer, 0,
 					fadeLength);
 
-			// Write the buffer
+			/* Write to line out */
 			line.write(sampleBufferB, 0, sampleBufferB.length);
 
-			//wavFile.writeFrames(sampleBuffer, sampleBuffer.length);
+			/* Write to file */
+			if (writeFile){
+				//wavFile.writeFrames(sampleBuffer, sampleBuffer.length);
+			}
+			
 			if (stop) {
 				break;
 			}
 		}
-		// Close the wavFile
-		wavFile.close();
+	
+		if (writeFile){
+			wavFile.close();
+		}
 
 	}
 

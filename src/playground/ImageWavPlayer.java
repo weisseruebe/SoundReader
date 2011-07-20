@@ -5,8 +5,8 @@ import java.io.File;
 import org.eclipse.swt.graphics.ImageData;
 
 import de.rettig.autokorrelation.Autokorrelator;
+import de.rettig.wavfile.WavFile;
 
-import wavfile.WavFile;
 
 public class ImageWavPlayer {
 	private static Autokorrelator autokorrelator = new Autokorrelator();
