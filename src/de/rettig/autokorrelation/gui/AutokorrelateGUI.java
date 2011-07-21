@@ -1,5 +1,6 @@
 package de.rettig.autokorrelation.gui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -39,6 +41,7 @@ import com.sun.org.apache.bcel.internal.generic.LALOAD;
 
 import de.rettig.autokorrelation.Autokorrelator;
 import de.rettig.autokorrelation.ImageDataSource;
+import de.rettig.autokorrelation.ImageFiledataSourceFactory;
 import de.rettig.autokorrelation.ImageListener;
 import de.rettig.autokorrelation.ImageWaveWriterPlayer;
 import de.rettig.autokorrelation.MouseBehaviour;
@@ -494,6 +497,18 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 						{
 							openFileMenuItem = new MenuItem(fileMenu, SWT.CASCADE);
 							openFileMenuItem.setText("Open");
+							openFileMenuItem.addSelectionListener(new SelectionAdapter() {
+								public void widgetSelected(SelectionEvent evt) {
+									FileDialog fileDialog = new FileDialog(getShell(),SWT.OPEN);
+									String filename = fileDialog.open();
+									if (filename!=null){
+										File file = new File(filename);
+										ImageDataSource tmp =ImageFiledataSourceFactory.find(file);
+										imageDataSource.setData(tmp);
+										updateFileName();
+									}
+								}
+							});
 						}
 						
 						fileMenuItem.setMenu(fileMenu);

@@ -15,6 +15,8 @@ public class ImageFiledataSourceFactory {
 	static Pattern p = Pattern.compile(re1+re2+re3+re4,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
 	public static ImageDataSource find(String txt, String path){
+		System.out.println(txt+" "+path);
+		
 		Matcher m = p.matcher(txt);
 		if (m.find())
 		{
@@ -22,6 +24,7 @@ public class ImageFiledataSourceFactory {
 			String number=m.group(2);
 			String dot=m.group(3);
 			String extension=m.group(4);
+			System.out.println(name+number+dot+extension);
 			File dir = new File(path);
 			FilenameFilter filter = new FilenameFilter(){
 
@@ -31,7 +34,8 @@ public class ImageFiledataSourceFactory {
 				
 			};
 			String[] files = dir.list(filter);
-		
+			if (files == null) return null;
+			
 			int first = -1;
 			int last = -1;
 			m = p.matcher(files[0]);
@@ -53,5 +57,10 @@ public class ImageFiledataSourceFactory {
 
 	public static void main(String[] args) {
 		System.out.println(find("burjatien.000158.bmp","/Users/andreasrettig/Desktop/tonspurb/")); 
+	}
+
+	public static ImageDataSource find(File file) {
+		System.out.println(file);
+		return find(file.getName(),file.getParent()+"/");
 	}
 }

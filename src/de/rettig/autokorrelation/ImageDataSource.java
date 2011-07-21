@@ -49,4 +49,8 @@ public class ImageDataSource {
 	public String toString(){
 		return createFileName(start)+" -> "+createFileName(end);
 	}
+
+	public void setData(ImageDataSource tmp) {
+		setData(tmp.path, tmp.name, tmp.extension, tmp.digits, tmp.start, tmp.end);
+	}
 }
