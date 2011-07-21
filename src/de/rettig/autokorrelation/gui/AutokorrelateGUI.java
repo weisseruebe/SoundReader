@@ -25,7 +25,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -33,11 +32,11 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 
 import com.cloudgarden.resource.SWTResourceManager;
-import com.sun.org.apache.bcel.internal.generic.LALOAD;
 
 import de.rettig.autokorrelation.Autokorrelator;
 import de.rettig.autokorrelation.ImageDataSource;
@@ -76,6 +75,7 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 	private MenuItem fileMenuItem;
 	protected int mouseStartY = -1;
 	private int region  = 100;
+	private ProgressBar level;
 	private Label labelFilename;
 	private Label label2;
 	private Spinner spinnerThreshold;
@@ -110,9 +110,6 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 	
 	MouseBehaviour korrBehaviour = new  MouseBehaviour(){
 
-		public void mouseDoubleClick(MouseEvent arg0) {
-		}
-
 		public void mouseDown(MouseEvent arg0) {
 			mouseStartY = diff+arg0.y;
 		}
@@ -134,11 +131,6 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 	
 	MouseBehaviour measureBehaviour = new  MouseBehaviour(){
 		
-		public void mouseDoubleClick(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
 		public void mouseDown(MouseEvent arg0) {
 			klickedYs.add(arg0.y);
 			if (klickedYs.size()>=2){
@@ -158,7 +150,7 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 			redraw();
 			
 		}
-		
+
 	};
 	
 	
@@ -210,6 +202,7 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 							lblPic.getImage().dispose();
 						}
 						lblPic.setImage(new Image(null,path));
+						level.setSelection(player.lastlevel);
 					}
 					
 				});
@@ -308,6 +301,15 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 				composite1LData.top =  new FormAttachment(0, 1000, 0);
 				composite1.setLayoutData(composite1LData);
 				{
+					FormData levelLData = new FormData();
+					levelLData.width = 256;
+					levelLData.height = 15;
+					levelLData.top =  new FormAttachment(0, 1000, 2);
+					levelLData.right =  new FormAttachment(1000, 1000, -16);
+					level = new ProgressBar(composite1, SWT.NONE);
+					level.setLayoutData(levelLData);
+				}
+				{
 					btnBack = new Button(composite1, SWT.PUSH | SWT.CENTER);
 					btnBack.setText("<");
 					FormData btnBackLData = new FormData();
@@ -316,6 +318,11 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 					btnBackLData.left =  new FormAttachment(0, 1000, 5);
 					btnBackLData.top =  new FormAttachment(0, 1000, 37);
 					btnBack.setLayoutData(btnBackLData);
+					btnBack.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent evt) {
+							loadNextPics(-1);
+						}
+					});
 				}
 				{
 					btnFwd = new Button(composite1, SWT.PUSH | SWT.CENTER);
@@ -328,7 +335,7 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 					btnFwd.setLayoutData(btnFwdLData);
 					btnFwd.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent evt) {
-							loadNextPics();
+							loadNextPics(1);
 						}
 					});
 				}
@@ -408,13 +415,13 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 				{
 					labelFilename = new Label(composite1, SWT.NONE);
 					FormData labelFilenameLData = new FormData();
-					labelFilenameLData.width = 696;
+					labelFilenameLData.width = 426;
 					labelFilenameLData.height = 21;
-					labelFilenameLData.right =  new FormAttachment(1000, 1000, -8);
+					labelFilenameLData.right =  new FormAttachment(1000, 1000, -278);
 					labelFilenameLData.left =  new FormAttachment(0, 1000, 11);
 					labelFilenameLData.top =  new FormAttachment(0, 1000, 3);
 					labelFilename.setLayoutData(labelFilenameLData);
-					labelFilename.setBackground(SWTResourceManager.getColor(236, 236, 236));
+					labelFilename.setBackground(SWTResourceManager.getColor(255, 255, 255));
 				}
 			}
 			{
@@ -547,9 +554,10 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 		
 	}
 
-	protected void loadNextPics() {
+	protected void loadNextPics(int i) {
 		 f1 = imageDataSource.getPath(index);
-		 index++;
+		 index+=i;
+		 index = Math.max(index, 0);
 		 f2 = imageDataSource.getPath(index);
 		 loadPics();
 		 redraw();

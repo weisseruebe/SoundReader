@@ -17,6 +17,8 @@ import de.rettig.wavfile.WavFileException;
 
 public class ImageWaveWriterPlayer {
 
+	public int lastlevel = 0;
+
 	private int LISTENERINTERVAL = 2;
 	private AudioFormat format ;
 	private DataLine.Info info;
@@ -95,6 +97,9 @@ public class ImageWaveWriterPlayer {
 			if (writeFile){
 				//wavFile.writeFrames(sampleBuffer, sampleBuffer.length);
 			}
+			
+			/* Sehr grobes Level */
+			lastlevel = (sampleBufferB[0] + sampleBufferB[sampleBufferB.length/2] +sampleBufferB[sampleBufferB.length-1])/3;
 			
 			if (stop) {
 				break;
