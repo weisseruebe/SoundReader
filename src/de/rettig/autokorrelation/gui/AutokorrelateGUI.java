@@ -75,6 +75,7 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 	private MenuItem fileMenuItem;
 	protected int mouseStartY = -1;
 	private int region  = 100;
+	private Button btnDensity;
 	private ProgressBar level;
 	private Label labelFilename;
 	private Label label2;
@@ -300,6 +301,21 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 				composite1LData.right =  new FormAttachment(1000, 1000, 0);
 				composite1LData.top =  new FormAttachment(0, 1000, 0);
 				composite1.setLayoutData(composite1LData);
+				{
+					btnDensity = new Button(composite1, SWT.TOGGLE | SWT.CENTER);
+					FormData btnDensityLData = new FormData();
+					btnDensityLData.width = 58;
+					btnDensityLData.height = 21;
+					btnDensityLData.left =  new FormAttachment(0, 1000, 133);
+					btnDensityLData.top =  new FormAttachment(0, 1000, 44);
+					btnDensity.setLayoutData(btnDensityLData);
+					btnDensity.setText("Density");
+					btnDensity.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent evt) {
+							player.setDensityMode(btnDensity.getSelection());
+						}
+					});
+				}
 				{
 					FormData levelLData = new FormData();
 					levelLData.width = 256;

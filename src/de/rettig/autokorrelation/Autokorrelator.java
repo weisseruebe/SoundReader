@@ -7,7 +7,8 @@ public class Autokorrelator {
 
 	public int THRESHOLD 		= 220;
 	public int NOISETHRESHOLD 	= 0;
-
+	public boolean densityMode = false;
+	
 	private int startX = 20;
 	private int min = Integer.MAX_VALUE;
 	
@@ -65,7 +66,7 @@ public class Autokorrelator {
 		
 		for (int y = 0;y < height; y++){
 			imageData.getPixels(startX, startY+y, pixels.length, pixels, 0);
-			tmp[y] = (byte) deNoise((int) (getAmplitude(pixels)/(float)imageData.width*128));
+			tmp[y] = (byte) getAmplitude(pixels);
 		}
 		
 		return tmp;
@@ -81,7 +82,7 @@ public class Autokorrelator {
 		return amplitude;
 	}
 
-	public int getAmplitude(int[] pixels) {
+	public int getAmplitudeT(int[] pixels) {
 		int a = 0;
 		for (int i:pixels) {
 			int r = (i >> 16) & 0xff;
@@ -89,8 +90,23 @@ public class Autokorrelator {
 			int b = i & 0xff;
 			a+= (r+b+g)/3 > THRESHOLD ? 1 : 0;
 		}
-		return a;
+		return (int) (a/(float)pixels.length*128);
 	}
 	
+	public int getAmplitudeD(int[] pixels) {
+		int a = 0;
+		for (int i:pixels) {
+			int r = (i >> 16) & 0xff;
+			int g = (i >> 8)  & 0xff;
+			int b = i & 0xff;
+			a+= r+g+b;//(r+b+g)/3 > THRESHOLD ? 1 : 0;
+		}
+		return a/(3*pixels.length*2);
+	}
+	
+	public int getAmplitude(int[] pixels){
+		if (densityMode ) return getAmplitudeD(pixels);
+		return getAmplitudeT(pixels);
+	}
 	
 }

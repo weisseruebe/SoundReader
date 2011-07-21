@@ -153,4 +153,9 @@ public class ImageWaveWriterPlayer {
 		return !stop;
 	}
 
+	public void setDensityMode(boolean selection) {
+		autokorrelator.densityMode = selection;
+		
+	}
+
 }
