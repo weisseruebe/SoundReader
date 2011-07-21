@@ -22,7 +22,6 @@ public class ImageFiledataSourceFactory {
 			String number=m.group(2);
 			String dot=m.group(3);
 			String extension=m.group(4);
-		
 			File dir = new File(path);
 			FilenameFilter filter = new FilenameFilter(){
 
@@ -53,6 +52,6 @@ public class ImageFiledataSourceFactory {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(find("TarotMechanic04362.bmp","/Users/andreasrettig/Desktop/tarotfull/")); 
+		System.out.println(find("burjatien.000158.bmp","/Users/andreasrettig/Desktop/tonspurb/")); 
 	}
 }
