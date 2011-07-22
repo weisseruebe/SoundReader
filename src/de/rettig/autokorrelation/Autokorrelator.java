@@ -12,6 +12,15 @@ public class Autokorrelator {
 	private int startX = 20;
 	private int min = Integer.MAX_VALUE;
 	
+	/***
+	 * Finds the maximum korrelation difference of the images in the given interval
+	 * @param start
+	 * @param end
+	 * @param i1Data
+	 * @param i2Data
+	 * @param results
+	 * @return
+	 */
 	public int findMaxKorrelation(int start, int end, ImageData i1Data, ImageData i2Data, int[] results){
 		int maxD = 1;
 		int maxV = 0;
@@ -26,7 +35,12 @@ public class Autokorrelator {
 		return  maxD;
 	}
 	
-	
+	/***
+	 * Calculates the korrelation value between the given arrays
+	 * @param v1
+	 * @param v2
+	 * @return
+	 */
 	public int korrArrays(int[] v1,int[] v2){
 		if (v1.length!=v2.length) throw new IllegalArgumentException("Arrays must be the same length");
 		int sum = 0;
@@ -36,6 +50,13 @@ public class Autokorrelator {
 		return sum;
 	}
 	
+	/***
+	 * Calculates the korrelation value of the given ImageDatas with the given phase difference
+	 * @param d
+	 * @param i1
+	 * @param i2
+	 * @return
+	 */
 	public int calcAutokorrDiff(int d, ImageData i1, ImageData i2){
 		d = Math.max(1, d);
 		int[] i1Amplitudes = getAmplitudes(i1,i1.height-d,d);
@@ -43,8 +64,14 @@ public class Autokorrelator {
 		
 		return korrArrays(i1Amplitudes, i2Amplitudes)/d;
 	}
-	
-
+	/***
+	 * Calculate the amplitudes of the given imagedata between start in the region of height
+	 * with the resolution of 8 bits, but returning an Integer :-(
+	 * @param imageData
+	 * @param startY
+	 * @param height
+	 * @return
+	 */
 	public int[] getAmplitudes(ImageData imageData, int startY, int height){
 		if (startY+height > imageData.height) throw new IllegalArgumentException("startY + height must not exceed imaegheight");
 		int[] tmp = new int[height];
@@ -58,7 +85,14 @@ public class Autokorrelator {
 		return tmp;
 	}
 	
-	
+	/***
+	 * Calculate the amplitudes of the given imagedata between start in the region of height
+	 * with the resolution of 8 bits
+	 * @param imageData
+	 * @param startY
+	 * @param height
+	 * @return
+	 */
 	public byte[] getByteAmplitudes(ImageData imageData, int startY, int height){
 		if (startY+height > imageData.height) throw new IllegalArgumentException("startY + height must not exceed imaegheight");
 		byte[] tmp = new byte[height];
@@ -72,6 +106,11 @@ public class Autokorrelator {
 		return tmp;
 	}
 	
+	/***
+	 * Simple denoise by cutting away very low amplitudes
+	 * @param amplitude
+	 * @return
+	 */
 	private int deNoise(int amplitude) {
 		if (amplitude < min){
 			min = amplitude;
@@ -82,6 +121,11 @@ public class Autokorrelator {
 		return amplitude;
 	}
 
+	/***
+	 * Calculate the amplitude by adding all pixels brighter than threshold
+	 * @param pixels
+	 * @return
+	 */
 	public int getAmplitudeT(int[] pixels) {
 		int a = 0;
 		for (int i:pixels) {
@@ -93,6 +137,12 @@ public class Autokorrelator {
 		return (int) (a/(float)pixels.length*128);
 	}
 	
+	/***
+	 * Calculate the amplitude of a pixel line by adding all pixel values 
+	 * Current resolution is 8 bit 
+	 * @param pixels
+	 * @return
+	 */
 	public int getAmplitudeD(int[] pixels) {
 		int a = 0;
 		for (int i:pixels) {
@@ -104,6 +154,11 @@ public class Autokorrelator {
 		return a/(3*pixels.length*2);
 	}
 	
+	/***
+	 * Calculates the pixel amplitude of the given array
+	 * @param pixels
+	 * @return
+	 */
 	public int getAmplitude(int[] pixels){
 		if (densityMode ) return getAmplitudeD(pixels);
 		return getAmplitudeT(pixels);

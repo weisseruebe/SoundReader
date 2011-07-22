@@ -24,7 +24,6 @@ public class ImageWaveWriterPlayer {
 	private DataLine.Info info;
 	private SourceDataLine line = null;   // And write it here.
 	private Autokorrelator autokorrelator = new Autokorrelator();
-
 	private ImageDataSource iSource;
 	private int offset      = 47;
 	private ImageListener imageListener;
@@ -155,7 +154,6 @@ public class ImageWaveWriterPlayer {
 
 	public void setDensityMode(boolean selection) {
 		autokorrelator.densityMode = selection;
-		
 	}
 
 }
