@@ -28,7 +28,7 @@ public class ImageWaveWriterPlayer {
 	private int offset      = 47;
 	private ImageListener imageListener;
 	private boolean stop = false;
-	private boolean writeFile = false;
+	private boolean writeFile = true;
 	private WavFile wavFile;
 
 	public ImageWaveWriterPlayer(ImageDataSource iSource){
@@ -44,11 +44,11 @@ public class ImageWaveWriterPlayer {
 		boolean started = false;
 		
 		int numPics     = iSource.getLength();
-		int sampleRate  = (1080 - offset) * 24;   // Samples per second
+		int sampleRate  = (2000 - offset) * 24;   // Samples per second
 		double duration = numPics / 24; // Seconds
 		int fadeLength  = 4;
 
-		format = new AudioFormat(25000,8,1,true,false);
+		format = new AudioFormat(48000,8,1,true,false);
 		info = new DataLine.Info(SourceDataLine.class,format);
 		
 		line = (SourceDataLine) AudioSystem.getLine(info);
@@ -74,7 +74,7 @@ public class ImageWaveWriterPlayer {
 				started = true;
 			}
 
-//			int[] sampleBuffer   = autokorrelator.getAmplitudes(imageData, 0,imageData.height - offset);
+			int[] sampleBuffer   = autokorrelator.getAmplitudes(imageData, 0,imageData.height - offset);
 			byte[] sampleBufferB = autokorrelator.getByteAmplitudes(imageData, 0,imageData.height - offset);
 
 			/* Fade with last frame */
@@ -94,7 +94,7 @@ public class ImageWaveWriterPlayer {
 
 			/* Write to file */
 			if (writeFile){
-				//wavFile.writeFrames(sampleBuffer, sampleBuffer.length);
+				wavFile.writeFrames(sampleBuffer, sampleBuffer.length);
 			}
 			
 			/* Sehr grobes Level */

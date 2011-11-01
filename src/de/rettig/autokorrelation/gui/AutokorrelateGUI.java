@@ -526,7 +526,7 @@ public class AutokorrelateGUI extends org.eclipse.swt.widgets.Composite {
 									String filename = fileDialog.open();
 									if (filename!=null){
 										File file = new File(filename);
-										ImageDataSource tmp =ImageFiledataSourceFactory.find(file);
+										ImageDataSource tmp = ImageFiledataSourceFactory.find(file);
 										imageDataSource.setData(tmp);
 										updateFileName();
 									}

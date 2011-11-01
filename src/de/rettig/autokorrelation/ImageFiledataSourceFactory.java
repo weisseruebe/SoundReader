@@ -56,7 +56,7 @@ public class ImageFiledataSourceFactory {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(find("burjatien.000158.bmp","/Users/andreasrettig/Desktop/tonspurb/")); 
+		System.out.println(find("IMG0000026440.bmp","/Users/andreasrettig/Desktop/BMP/")); 
 	}
 
 	public static ImageDataSource find(File file) {

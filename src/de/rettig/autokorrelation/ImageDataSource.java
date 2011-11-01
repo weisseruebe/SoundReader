@@ -31,11 +31,11 @@ public class ImageDataSource {
 	
 	
 	public ImageData getImageData(int n) {
-		return new ImageData(createFileName(n));
+		return new ImageData(createFileName(n+start));
 	}
 
-	private String createFileName(int n) {
-		return String.format("%s%s%0"+digits+"d.%s", path,name,n,extension);
+	private String createFileName(int absoluteIndex) {
+		return String.format("%s%s%0"+digits+"d.%s",path,name,absoluteIndex,extension);
 	}
 
 	public int getLength() {
@@ -43,7 +43,7 @@ public class ImageDataSource {
 	}
 	
 	public String getPath(int n) {
-		return createFileName(n);
+		return createFileName(n+start);
 	}
 	
 	public String toString(){
@@ -51,6 +51,7 @@ public class ImageDataSource {
 	}
 
 	public void setData(ImageDataSource tmp) {
+		System.out.println(tmp.toString());
 		setData(tmp.path, tmp.name, tmp.extension, tmp.digits, tmp.start, tmp.end);
 	}
 }
